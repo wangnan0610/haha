@@ -6,6 +6,8 @@
       <div class="panel panel-info">
         <div class="panel-heading">
           任务单元分配
+          <button type="button" class="btn btn-primary" id="task-submit-button" data-toggle="modal" data-target="#task-submit-modal">提交</button>
+          <button type="button" class="btn btn-danger" id="task-clear">清除缓存</button>
         </div>
         <div class="panel-body">
           <div id="task-tree">
@@ -20,6 +22,42 @@
           展示界面
         </div>
         <div class="panel-body">
+        </div>
+      </div>
+    </div>
+
+    <div id="task-submit-modal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"></h4>
+          </div>
+          <div class="modal-body">
+            <h3>确定提交?</h3>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">否</button>
+            <button type="button" class="btn btn-primary" id="task-submit">是</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="task-survey-modal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"></h4>
+          </div>
+          <div class="modal-body">
+            <h3>是否生成该任务模块的调研表?</h3>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">否</button>
+            <button type="button" class="btn btn-primary" id="task-survey-submit">是</button>
+          </div>
         </div>
       </div>
     </div>

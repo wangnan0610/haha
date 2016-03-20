@@ -32,6 +32,8 @@ module.exports = function(app) {
 
   //task
   app.get('/task', auth.adminRequired, task.index);
+  app.post('/task/create', auth.adminRequired, task.create);
+  app.post('/task/survey/create', auth.adminRequired, task.createSurvey);
 
   //therp
   app.get('/therp', auth.adminRequired, therp.index);
