@@ -36,7 +36,8 @@ module.exports = function(app) {
   app.post('/task/survey/create', auth.adminRequired, task.createSurvey);
 
   //therp
-  app.get('/therp', auth.adminRequired, therp.index);
+  app.get('/therp', therp.index);
+  app.get('/therp/:filename', therp.openFile);
 
   //gray
   app.get('/gray', auth.adminRequired, gray.index);
