@@ -109,3 +109,20 @@ exports.therpModule = function(arr) {
   return result;
 }
 
+//灰色
+//任务单元
+exports.grayTask = function() {
+  
+};
+
+//灰色
+//子任务模块
+exports.graySubModule = function() {
+  
+};
+
+//灰色
+//任务模块
+exports.grayModule = function() {
+  
+};

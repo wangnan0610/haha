@@ -8,11 +8,7 @@ var DIR = path.join(__dirname, '../public/file3/');
 
 //人误率分析，默认读取file3下的文件名列表
 exports.index = function(req, res) {
-  var files = fs.readdirSync(DIR);
-
-  files = _.filter(files, function(file) {
-    return file.indexOf('_1.xlsx') !== -1;
-  });
+  var files = util.readFolder3('therp');
 
   res.render('therp', {
     files: files,
@@ -31,7 +27,7 @@ exports.openFile = function(req, res) {
     res.redirect('/therp');
   } else {
     var content = util.readExcel(path.join(DIR, filename));
-    var obj = util.formatJsTree(content);
+    var obj = util.formatJsTree(content, 'therp');
     obj = util.getTherp(obj);
 
     res.render('therp', {
@@ -57,7 +53,7 @@ exports.saveFile = function(req, res) {
     var error;
     try {
       var content = util.readExcel(path.join(DIR, filename));
-      var obj = util.formatJsTree(content);
+      var obj = util.formatJsTree(content, 'therp');
       obj = util.getTherp(obj);
       util.therpToExcel(filename, obj);
     } catch (e) {

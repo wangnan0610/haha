@@ -41,10 +41,11 @@ module.exports = function(app) {
   app.get('/therp/save/:filename', therp.saveFile);
 
   //gray
-  app.get('/gray', auth.adminRequired, gray.index);
+  app.get('/gray', gray.index);
+  app.get('/gray/:filename', gray.openFiles);
   
   //cooper
-  app.get('/cooper', auth.adminRequired, cooper.index);
+  app.get('/cooper', cooper.index);
 
   //user
   app.get('/user', auth.rootRequired, user.index);

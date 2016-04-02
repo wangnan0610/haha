@@ -1,0 +1,58 @@
+<% layout( 'layout') -%>
+
+  <% block( 'css').append('<link rel="stylesheet" href="/components/jstree/dist/themes/default/style.min.css">') %>
+
+    <div class="col-md-4">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+           人机分配灰色熵值评价法
+          <a type="button" href="/gray/files" class="btn btn-primary" id="gray-open-files">打开文件</a>
+        </div>
+        <div class="panel-body">
+          <div id="gray-tree">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <% if (file) { %>
+          展示界面 : <h id="excel-filename"> <%= file %> </h>
+          <% } else { %>
+          展示界面
+          <% } %>
+        </div>
+        <div class="panel-body">
+          <%if (files && files.length > 0) { %>
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>文件名</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for (var i = 0; i < files.length; i++) { %>
+                  <tr>
+                    <td><%= files[i] %></td>
+                    <td><a href="/gray/<%=files[i]%>"class="btn btn-success btn-sm">打开</a></td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>          
+            <% } else { %>
+              <div id="gray-result"></div>
+            <% } %>
+        </div>
+      </div>
+    </div>
+    <script>
+      if (<%- jsTree %>) {
+        var jsTreeData = <%- jsTree %>;
+      }
+    </script>
+
+    <% block( 'js').append('<script src="/components/jstree/dist/jstree.js"></script>') %>
+    <% block( 'js').append( '<script src="/js/gray.js"></script>') %>
