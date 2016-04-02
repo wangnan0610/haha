@@ -1,6 +1,9 @@
 var xlsx = require('xlsx');
 var _ = require('lodash');
+var xl = require('excel4node'); //用来写
+var path = require('path');
 var formula = require('./formula');
+
 
 //read excel content
 //return csv
@@ -26,32 +29,39 @@ exports.formatJsTree = function(csv) {
   var tempObj = {};
   var obj = {};
 
-  function createBaseObj(text) {
+  function createBaseObj(text, role) {
     return {
       text: text,
-      data: {},
+      data: {
+        role: role,
+        text: text,
+        children: [],
+      },
       children: []
     }
   }
 
   tempArr = csv.split('\n');
+  var count = 0;
 
   _.each(tempArr, function(val, key) {
     if (key !== 0 && val) {
       var data = val.split(',');
+      count++;
 
       if (data[0]) { //任务模块
-        obj = createBaseObj(data[0]);
+        obj = createBaseObj(data[0], 1);
       }
 
       if (data[1]) { //子任务模块
-        var o = createBaseObj(data[1]);
+        var o = createBaseObj(data[1], 2);
         obj.children.push(o);
+        obj.data.children.push(o);
         tempObj = o;
       }
 
       if (data[2]) { //任务单元
-        var o = createBaseObj(data[2]);
+        var o = createBaseObj(data[2], 3);
         o.data.a = data[3];
         o.data.b = data[4];
         o.data.c = data[5];
@@ -59,9 +69,12 @@ exports.formatJsTree = function(csv) {
         o.data.e = data[7];
         o.data.f = data[8];
         tempObj.children.push(o);
+        tempObj.data.children.push(o);
       }
     }
   })
+
+  obj.data.count = count;//添加一个数字用来记录多少行，为其他的方便 
 
   return obj;
 }
@@ -88,4 +101,39 @@ exports.getTherp = function(obj) {
   obj.data.therp = r;
 
   return obj;
+}
+
+//将jstree可识别的therp对象转化成excel
+exports.therpToExcel = function(file, obj) {
+  var wb = new xl.WorkBook();
+  var ws = wb.WorkSheet('sheet');
+
+  //init
+  ws.Cell(1, 1).String('任务模块');
+  ws.Cell(1, 2).String('子任务模块');
+  ws.Cell(1, 3).String('任务单元');
+  ws.Cell(1, 4).String('任务单元人误率');
+  ws.Cell(1, 5).String('子任务模块人误率');
+  ws.Cell(1, 6).String('任务模块人误率');
+
+  var end = 2; //用来记录子任务模块最后到哪
+  var p = 2; //用来跟踪任务单元到哪
+  _.each(obj.children, function(sub) {
+    _.each(sub.children, function(task) {
+      console.log(task);
+      ws.Cell(p, 3).String(task.text);
+      ws.Cell(p, 4).Number(task.data.therp);
+      p++;
+    })
+    var tmp = end;
+    end += sub.children.length > 0 ? sub.children.length : 1;
+    ws.Cell(tmp, 2, end - 1, 2, true).String(sub.text);
+    ws.Cell(tmp, 5, end - 1, 5, true).Number(sub.data.therp);
+  })
+
+  ws.Cell(2, 1, end - 1, 1, true).String(obj.text);
+  ws.Cell(2, 6, end - 1, 6, true).Number(obj.data.therp);
+
+  wb.write(path.join(__dirname, '../public/file4/') + file + '_1_result.xlsx');
+
 }

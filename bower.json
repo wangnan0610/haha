@@ -40,6 +40,7 @@
     "parsleyjs": "~2.1.3",
     "blueimp-file-upload": "jquery-file-upload#~9.11.2",
     "jstree": "~3.2.1",
-    "store-js": "git://github.com/marcuswestin/store.js.git#~1.3.20"
+    "store-js": "git://github.com/marcuswestin/store.js.git#~1.3.20",
+    "lodash": "~4.7.0"
   }
 }

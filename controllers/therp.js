@@ -16,31 +16,58 @@ exports.index = function(req, res) {
 
   res.render('therp', {
     files: files,
-    jsTree: ''
+    jsTree: '',
+    file: '',
   })
 }
 
-//打开对应的excel文件，并转换成jstree需要的json格式
+//打开对应的excel文件，并转换成jstree需要的json格式, 并且拿到therp数据
 exports.openFile = function(req, res) {
   var filename = req.params.filename || '';
 
   var files = fs.readdirSync(DIR);
 
-  if (files.indexOf(filename) === -1) {//文件不存在
+  if (files.indexOf(filename) === -1) { //文件不存在
     res.redirect('/therp');
   } else {
     var content = util.readExcel(path.join(DIR, filename));
     var obj = util.formatJsTree(content);
+    obj = util.getTherp(obj);
 
     res.render('therp', {
       jsTree: JSON.stringify(obj),
-      files: []
-    }) 
+      files: [],
+      file: filename.slice(0, -5),
+    })
   }
 }
 
-//根据excel 内容计算人误率
-exports.getResult = function(req, res) {
-  
-}
+//将计算过的数据保存到excel里面
+exports.saveFile = function(req, res) {
+  var filename = req.params.filename || '';
 
+  var files = fs.readdirSync(DIR);
+
+  if (files.indexOf(filename) === -1) { //文件不存在
+    res.json({
+      code: 500,
+      error: '文件不存在'
+    })
+  } else {
+    var error;
+    try {
+      var content = util.readExcel(path.join(DIR, filename));
+      var obj = util.formatJsTree(content);
+      obj = util.getTherp(obj);
+      util.therpToExcel(filename, obj);
+    } catch (e) {
+      error = e;
+    }
+
+    res.json({
+      code: error ? 500 : 200,
+      error: error || ''
+    })
+
+  }
+}

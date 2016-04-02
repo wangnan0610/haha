@@ -18,7 +18,11 @@
     <div class="col-md-8">
       <div class="panel panel-info">
         <div class="panel-heading">
+          <% if (file) { %>
+          展示界面 : <h id="therp-filename"> <%= file %> </h>
+          <% } else { %>
           展示界面
+          <% } %>
         </div>
         <div class="panel-body">
           <%if (files && files.length > 0) { %>
@@ -38,12 +42,16 @@
                 <% } %>
               </tbody>
             </table>          
-          <% } %>
+            <% } else { %>
+              <div id="therp-result"></div>
+            <% } %>
         </div>
       </div>
     </div>
     <script>
-      var therpJsTree = <%- jsTree %>;
+      if (<%- jsTree %>) {
+        var therpJsTree = <%- jsTree %>;
+      }
     </script>
 
     <% block( 'js').append('<script src="/components/jstree/dist/jstree.js"></script>') %>

@@ -38,6 +38,7 @@ module.exports = function(app) {
   //therp
   app.get('/therp', therp.index);
   app.get('/therp/:filename', therp.openFile);
+  app.get('/therp/save/:filename', therp.saveFile);
 
   //gray
   app.get('/gray', auth.adminRequired, gray.index);
