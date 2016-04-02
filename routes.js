@@ -43,6 +43,7 @@ module.exports = function(app) {
   //gray
   app.get('/gray', gray.index);
   app.get('/gray/:filename', gray.openFiles);
+  app.post('/gray/:filename', gray.saveFile);
   
   //cooper
   app.get('/cooper', cooper.index);

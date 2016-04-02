@@ -22,6 +22,59 @@ myUtil.formatTaskData = function(obj) {
   return compiled(obj);
 }
 
+myUtil.formatTaskDataGray = function(obj) {
+  var str = '';
+
+  //表1
+  str += '<table class="table table-bordered table-striped" >' +
+    '<thead>' +
+    '<tr><th>任务单元</th><th>体力劳动强度</th><th>脑力劳动强度</th><th>体力作业复杂度</th><th>脑力作用复杂度</th></tr>' +
+    '</thead>' +
+
+    '<tbody>' +
+    '<% _.each(obj.gd, function(val, index) { %> ' +
+    '<tr><td>专家<%= val.file %></td><td><%= val.data.a %></td><td><%= val.data.b %></td><td><%= val.data.c %></td><td><%= val.data.d %></td></tr>' +
+    '<% }) %>' +
+    '</tbody>' +
+    '</table>';
+
+  //表2
+  str += '<table class="table table-bordered table-striped" >' +
+    '<tbody>' +
+    '<tr><td>任务单元</td><td><%= obj.text %></td></tr>' +
+    '<tr><td>体力劳动权重</td><td><%= obj.gray.b1 %></td></tr>' +
+    '<tr><td>脑力劳动权重</td><td><%= obj.gray.b2 %></td></tr>' +
+    '<tr><td>体力作业复杂度权重</td><td><%= obj.gray.b3 %></td></tr>' +
+    '<tr><td>脑力作用复杂度权重</td><td><%= obj.gray.b4 %></td></tr>' +
+    '</tbody>' +
+    '</table>';
+
+  //表3
+  str += '<table class="table table-bordered table-striped" >' +
+    '<thead>' +
+    '<tr><th>任务单元</th><th>加权得分</th><th>最后得分</th></tr>' +
+    '</thead>' +
+
+    '<% _.each(obj.gd, function(val, index) { %> ' +
+    '<% if (index === 0) { %>' +
+    '<tr><td>专家<%= val.file %></td>' +
+    '<td><%= val.data.z %></td>' +
+    '<td rowspan=<%= obj.gd.length %>><%= obj.gray.s %></td></tr>' +
+    '<% } else { %>' +
+    '<tr><td>专家<%= val.file %></td>' +
+    '<td><%= val.data.z %></td></tr>' +
+    '<% } %>' +
+    '<% }) %>' +
+
+    '<tbody>' +
+    '</tbody>' +
+    '</table>';
+
+  var compiled = _.template(str);
+
+  return compiled(obj);
+};
+
 myUtil.formatSubData = function(obj) {
   var str = '';
   var tmp = '';
@@ -49,6 +102,36 @@ myUtil.formatSubData = function(obj) {
   var compiled = _.template(str);
 
   return compiled(obj);
+}
+
+myUtil.formatSubModuleDataGray = function(obj) {
+  var str = '';
+  var tmp = '';
+
+  tmp += '<% _.each(obj.children, function(val, index) { %> ' +
+    '<% if (index === 0) { %>' +
+    '<tr><td rowspan=<%= obj.children.length > 0 ? obj.children.length : 1 %>><%= obj.text %></td>' +
+    '<td><%= obj.children[index].data.text %></td>' +
+    '<td><%= obj.children[index].data.gray.y %></td>' +
+    '<td rowspan=<%= obj.children.length > 0 ? obj.children.length :  1 %>><%= obj.gray %></td></tr>' +
+    '<% } else { %>' +
+    '<tr><td><%= obj.children[index].data.text %></td>' +
+    '<td><%= obj.children[index].data.gray.y %></td></tr>' +
+    '<% } %>' +
+    '<% }) %>';
+  str = '<table class="table table-bordered table-striped" >' +
+    '<thead>' +
+    '<tr><th>子任务模块</th><th>任务单元</th><th>任务单元权重</th><th>子任务模块得分</th></tr>' +
+    '</thead>' +
+    '<tbody>' +
+    tmp +
+    '</tbody>' +
+    '</table>';
+
+  var compiled = _.template(str);
+
+  return compiled(obj);
+
 }
 
 myUtil.formatModuleData = function(obj) {
@@ -96,15 +179,64 @@ myUtil.formatModuleData = function(obj) {
   return compiled(obj);
 }
 
+myUtil.formatModuleDataGray = function(obj) {
+  var str = '';
+  var tmp = '';
+
+  tmp += '<% _.each(obj.children, function(val, index) { %> ' +
+    '<% _.each(val.children, function(v, k) { %>' +
+    '<% if (index===0) {%>' +
+    '<% if (k === 0) { %>' +
+    '<tr><td rowspan=<%= obj.count %>><%= obj.text %></td>' +
+    '<td rowspan=<%= val.children.length > 0 ?val.children.length : 1%>><%=val.data.text%></td>' +
+    '<td><%= v.data.text %></td>' +
+    '<td><%= v.data.gray.s %></td>' +
+    '<td rowspan=<%= val.children.length > 0 ?val.children.length : 1%>><%=val.data.gray%></td>' +
+    '<td rowspan=<%= obj.count %>><%= obj.gray %></td></tr>' +
+    '<% } else { %>' +
+    '<tr><td><%= v.data.text %></td>' +
+    '<td><%= v.data.gray.s %></td></tr>' +
+    '<% } %>' +
+    '<% } else { %>' +
+    '<% if (k === 0) { %>' +
+    '<tr><td rowspan=<%= val.children.length > 0 ?val.children.length : 1%>><%=val.data.text%></td>' +
+    '<td><%= v.data.text %></td>' +
+    '<td><%= v.data.gray.s %></td>' +
+    '<td rowspan=<%= val.children.length > 0 ?val.children.length : 1%>><%=val.data.gray%></td></tr>' +
+    '<% } else { %>' +
+    '<tr><td><%= v.data.text %></td>' +
+    '<td><%= v.data.gray.s %></td></tr>' +
+    '<% }%>' +
+    '<% }%>' +
+    '<% }) %>' +
+    '<% }) %>';
+  str = '<table class="table table-bordered table-striped" >' +
+    '<thead>' +
+    '<tr><th>任务模块</th><th>子任务模块</th><th>任务单元</th><th>任务单元得分</th><th>子任务模块得分</th><th>任务模块得分</th></tr>' +
+    '</thead>' +
+    '<tbody>' +
+    tmp +
+    '</tbody>' +
+    '</table>';
+
+  var compiled = _.template(str);
+
+  return compiled(obj);
+
+}
+
 myUtil.saveToExcel = function(ele) {
 
   $this = $(ele);
   var url = $this.attr('data-type');
   console.log('Save: ', url);
+  console.log(JSON.stringify(window.jsTreeData));
   $.ajax({
     url: url,
-    method: 'get',
+    method: 'post',
     dataType: 'json',
+    contentType: "application/json",
+    data: JSON.stringify(window.jsTreeData),
     success: function(data) {
       if (data.code == 200) {
         alert('保存成功');
@@ -124,7 +256,7 @@ myUtil.saveToExcel = function(ele) {
 //obj.url 保存的url
 myUtil.addSaveButton = function(obj) {
   var str = '';
-  str = '<button onclick="window.myUtil.saveToExcel(this)" type="button" class="btn btn-success pull-right" data-type=<%= obj.url %> id=<%= obj.id %>>保存</button>';
+  str = '<button onclick="window.myUtil.saveToExcel(this)" type="button" class="btn btn-success pull-right" data-type=<%= obj.url %> id="save-excel-button">保存</button>';
 
   var compiled = _.template(str);
 

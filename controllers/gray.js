@@ -33,7 +33,7 @@ exports.openFiles = function(req, res) {
       if (err) {
         console.error(err);
       }
-      console.log(results);
+      results = util.getGray(results);
       res.render('gray', {
         jsTree: JSON.stringify(results),
         files: [],
@@ -41,4 +41,29 @@ exports.openFiles = function(req, res) {
       })
     })
   }
+}
+
+//将计算过的数据保存到excel里面
+exports.saveFile = function(req, res) {
+  //filename params 任务模块_011
+
+  var error;
+
+  try {
+    var obj = req.body;
+
+    var file = util.addFileResult(req.params.filename, 'gray');
+
+    util.grayToExcel(file, obj);
+
+  } catch (e) {
+    console.error(e.stack);
+    error = e;
+  }
+
+  res.json({
+    code: error ? 500 : 200,
+    error: error
+  })
+
 }

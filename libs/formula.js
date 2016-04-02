@@ -80,7 +80,7 @@ exports.therpTask = function(action, t1, t, experience, press, inter) {
   var t2 = t * (1 + k1) * (1 + k2) * (1 + k3);
   console.log('参数: ', paramObj, k1, k2, k3, t2);
 
-  var result = Math.exp(-Math.pow((t1/t2 - paramObj.c) / paramObj.a, paramObj.b));
+  var result = Math.exp(-Math.pow((t1 / t2 - paramObj.c) / paramObj.a, paramObj.b));
 
   return result;
 }
@@ -91,8 +91,8 @@ exports.therpTask = function(action, t1, t, experience, press, inter) {
 exports.therpSubModule = function(arr) {
   var result = 0;
   _.each(arr, function(p) {
-    result += p; 
-  }) 
+    result += p;
+  })
 
   return result;
 }
@@ -103,26 +103,141 @@ exports.therpSubModule = function(arr) {
 exports.therpModule = function(arr) {
   var result = 0;
   _.each(arr, function(p) {
-    result += p; 
-  }) 
+    result += p;
+  })
 
   return result;
 }
 
 //灰色
 //任务单元
-exports.grayTask = function() {
-  
+//{file: file, data: {a, b, c, d}} //file表示专家，a、b、c、d表示各个指标
+exports.grayTask = function(arr) {
+  //专家数
+  var m = arr.length;
+
+  // 各个指标属性综合 
+  var d1 = 0;
+  var d2 = 0;
+  var d3 = 0;
+  var d4 = 0;
+  _.each(arr, function(o) {
+    d1 += o.data.a;
+    d2 += o.data.b;
+    d3 += o.data.c;
+    d4 += o.data.d;
+  });
+
+  //正规化系数k
+  var k = 1 / (0.6478 * m);
+
+  //TODO 各个因子的嫡
+  var e1 = 0;
+  var e2 = 0;
+  var e3 = 0;
+  var e4 = 0;
+  _.each(arr, function(o) {
+    var x1 = (o.data.a / d1);
+    var x2 = (o.data.b / d2);
+    var x3 = (o.data.c / d3);
+    var x4 = (o.data.d / d4);
+
+    var tmp1 = x1 * Math.log(x1);
+    var tmp2 = x2 * Math.log(x2);
+    var tmp3 = x1 * Math.log(x3);
+    var tmp4 = x1 * Math.log(x4);
+
+    e1 += tmp1;
+    e2 += tmp2;
+    e3 += tmp3;
+    e4 += tmp4;
+  })
+
+  e1 = k * e1;
+  e2 = k * e2;
+  e3 = k * e3;
+  e4 = k * e4;
+
+  //计算各个因子熵的总和
+  var e = 0;
+  e = e1 + e2 + e3 + e4;
+
+  //计算相对的权重
+  var r1 = 0;
+  var r2 = 0;
+  var r3 = 0;
+  var r4 = 0;
+
+  r1 = Math.pow((1 / (m - e)), (1 - e1));
+  r2 = Math.pow((1 / (m - e)), (1 - e2));
+  r3 = Math.pow((1 / (m - e)), (1 - e3));
+  r4 = Math.pow((1 / (m - e)), (1 - e4));
+
+  //计算正规化权重：即为各个因子之权重
+  var b1 = 0;
+  var b2 = 0;
+  var b3 = 0;
+  var b4 = 0;
+
+  var r = r1 + r2 + r3 + r4;
+
+  b1 = r1 / r;
+  b2 = r2 / r;
+  b3 = r3 / r;
+  b4 = r4 / r;
+
+  //各个专家的加权得分
+  var s = 0;
+  _.each(arr, function(o) {
+    var tmpS = o.data.a * b1 + o.data.b * b2 + o.data.c * b3 + o.data.d * b4;
+    s += tmpS;
+
+    //各个专家的权重
+    o.data.z = tmpS;
+  })
+
+  var s = s / m;
+
+  console.log('--->>>灰色参数: ', 'w1: ', b1, ' w2: ', b2, ' w3: ', b3, ' w4: ', b4);
+
+  //需要的数据
+  //b2, b4, s;
+  return {
+    'b1': b1,
+    'b2': b2,
+    'b3': b3,
+    'b4': b4,
+    's': s,
+  }
 };
+
 
 //灰色
 //子任务模块
-exports.graySubModule = function() {
-  
+exports.graySubModule = function(arr) {
+  //利用各个task的数据计算子任务的gray
+  var n = arr.length;
+
+  var res = 0;
+  var total = 0;
+
+  _.each(arr, function(o) {
+    total += (o.b2 + o.b4);
+  });
+
+  _.each(arr, function(o) {
+    var tmpRes = o.s * ((o.b2 + o.b4) / total);
+
+    //任务单元的权重
+    o.y = tmpRes;
+    res += tmpRes;
+  })
+
+  return res;
 };
 
 //灰色
 //任务模块
-exports.grayModule = function() {
-  
+exports.grayModule = function(arr) {
+  return _.sum(arr);
 };
