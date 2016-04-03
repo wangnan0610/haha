@@ -241,3 +241,44 @@ exports.graySubModule = function(arr) {
 exports.grayModule = function(arr) {
   return _.sum(arr);
 };
+
+
+//Cooper
+//任务单元
+exports.cooperTask = function(arr) {
+  var m = arr.length;
+
+  //计算平均数,即任务单元得分
+  var total = 0; //总分
+
+  _.each(arr, function(o) {
+    total += parseFloat(o.data.a);
+  })
+
+  console.log('------>>>>参数: ', 'total: ', total, 'm: ', m);
+  var sch = total / m;
+
+  return sch;
+};
+
+//Cooper
+//子任务模块
+//TODO
+exports.cooperSubModule = function(arr) {
+  var total = 0;    
+
+  total = _.sum(arr);
+
+  return total;
+};
+
+//Cooper
+//任务模块 
+//TODO
+exports.cooperModule = function(arr) {
+  var total = 0;    
+
+  total = _.sum(arr);
+
+  return total;
+};

@@ -248,6 +248,40 @@ function arrToObj(arr, type) {
       return obj;
     }
   } else {
+    var obj = {};
+    if (!arr || arr.length === 0) {
+      return arr;
+    } else {
+      _.each(arr, function(o, index) {
+        //init
+        if (index === 0) {
+          obj = o.data;
+        }
+        var file = o.file;
+        _.each(o.data.children, function(s, si) {
+          _.each(s.data.children, function(t, ti) {
+            var tmp = obj.data.children[si].data.children[ti].data['gd'];
+            if (!tmp) {
+              obj.data.children[si].data.children[ti].data['gd'] = [];
+            }
+            obj.data.children[si].data.children[ti].data['gd'].push({
+              file: getExNo(file),
+              data: {
+                a: t.data.a,
+              }
+            })
+          });
+        })
+      });
+
+      //覆盖一些值
+      obj.children = obj.data.children;
+      _.each(obj.children, function(sub) {
+        sub.children = sub.data.children;
+      });
+
+      return obj;
+    }
 
   }
 }
@@ -280,6 +314,27 @@ exports.formatJsTreeSp = function(filename, type, fn) {
       fn(err, results);
     })
   } else {
+    var files = self.getFilesSp(filename, type);
+
+    async.map(files, function(file, cb) {
+      var error;
+      var obj;
+      try {
+        var content = self.readExcel(path.join(DIR, file));
+        var data = self.formatJsTree(content, 'cooper');
+        obj = {
+          data: data,
+          file: file
+        }
+      } catch (e) {
+        error = e;
+      }
+      cb(error, obj);
+    }, function(err, results) {
+      //处理数据
+      results = arrToObj(results, type);
+      fn(err, results);
+    })
 
   }
 };
@@ -333,7 +388,26 @@ exports.getGray = function(obj) {
 };
 
 //cooper计算
-exports.getCooper = function(arr) {
+exports.getCooper = function(obj) {
+  var arr = [];
+
+  _.each(obj.children, function(sub) {
+    var subArr = [];
+    _.each(sub.children, function(task) {
+      var result = formula.cooperTask(task.data.gd);
+      task.data.sch = result;
+      subArr.push(result);
+    })
+
+    var res = formula.cooperSubModule(subArr);
+    sub.data.sch = res;
+    arr.push(res);
+  });
+
+  var r = formula.cooperModule(arr);
+  obj.data.sch = r;
+
+  return obj;
 
 };
 
@@ -402,6 +476,41 @@ exports.grayToExcel = function(file, obj) {
 
   ws.Cell(2, 1, end - 1, 1, true).String(obj.text);
   ws.Cell(2, 6, end - 1, 6, true).Number(obj.data.gray);
+
+  wb.write(path.join(__dirname, '../public/file4/') + file);
+};
+
+
+//将jstree可识别的cooper对象转化成excel
+exports.cooperToExcel = function(file, obj) {
+  var wb = new xl.WorkBook();
+  var ws = wb.WorkSheet('sheet');
+
+  //init
+  ws.Cell(1, 1).String('任务模块');
+  ws.Cell(1, 2).String('子任务模块');
+  ws.Cell(1, 3).String('任务单元');
+  ws.Cell(1, 4).String('任务单元Cooper-harper得分');
+  ws.Cell(1, 5).String('子任务模块Cooper-harper得分');
+  ws.Cell(1, 6).String('任务模块Cooper-harper得分');
+
+  var end = 2; //用来记录子任务模块最后到哪
+  var p = 2; //用来跟踪任务单元到哪
+  _.each(obj.children, function(sub) {
+    _.each(sub.children, function(task) {
+      console.log(task);
+      ws.Cell(p, 3).String(task.text);
+      ws.Cell(p, 4).Number(task.data.sch);
+      p++;
+    })
+    var tmp = end;
+    end += sub.children.length > 0 ? sub.children.length : 1;
+    ws.Cell(tmp, 2, end - 1, 2, true).String(sub.text);
+    ws.Cell(tmp, 5, end - 1, 5, true).Number(sub.data.sch);
+  })
+
+  ws.Cell(2, 1, end - 1, 1, true).String(obj.text);
+  ws.Cell(2, 6, end - 1, 6, true).Number(obj.data.sch);
 
   wb.write(path.join(__dirname, '../public/file4/') + file);
 };

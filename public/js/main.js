@@ -75,6 +75,30 @@ myUtil.formatTaskDataGray = function(obj) {
   return compiled(obj);
 };
 
+myUtil.formatTaskDataCooper = function(obj) {
+  var str = '';
+
+  str += '<table class="table table-bordered table-striped" >' +
+    '<thead>' +
+    '<tr><th>任务单元</th><th>Cooper-harper得分</th></tr>' +
+    '</thead>' +
+
+    '<tbody>' +
+    '<% _.each(obj.gd, function(val, index) { %> ' +
+    '<tr><td>专家<%= val.file %></td><td><%= val.data.a %></td></tr>' +
+    '<% }) %>' +
+    '</tbody>' +
+
+    '<tfoot>' +
+    '<tr><td>任务单元最后得分</td><td><%= obj.sch %></td></tr>'
+    '</tfoot>' +
+    '</table>';
+
+  var compiled = _.template(str);
+
+  return compiled(obj);
+};
+
 myUtil.formatSubData = function(obj) {
   var str = '';
   var tmp = '';
@@ -122,6 +146,36 @@ myUtil.formatSubModuleDataGray = function(obj) {
   str = '<table class="table table-bordered table-striped" >' +
     '<thead>' +
     '<tr><th>子任务模块</th><th>任务单元</th><th>任务单元权重</th><th>子任务模块得分</th></tr>' +
+    '</thead>' +
+    '<tbody>' +
+    tmp +
+    '</tbody>' +
+    '</table>';
+
+  var compiled = _.template(str);
+
+  return compiled(obj);
+
+}
+
+myUtil.formatSubModuleDataCooper = function(obj) {
+  var str = '';
+  var tmp = '';
+
+  tmp += '<% _.each(obj.children, function(val, index) { %> ' +
+    '<% if (index === 0) { %>' +
+    '<tr><td rowspan=<%= obj.children.length > 0 ? obj.children.length : 1 %>><%= obj.text %></td>' +
+    '<td><%= obj.children[index].data.text %></td>' +
+    '<td><%= obj.children[index].data.sch %></td>' +
+    '<td rowspan=<%= obj.children.length > 0 ? obj.children.length :  1 %>><%= obj.sch %></td></tr>' +
+    '<% } else { %>' +
+    '<tr><td><%= obj.children[index].data.text %></td>' +
+    '<td><%= obj.children[index].data.sch %></td></tr>' +
+    '<% } %>' +
+    '<% }) %>';
+  str = '<table class="table table-bordered table-striped" >' +
+    '<thead>' +
+    '<tr><th>子任务模块</th><th>任务单元</th><th>任务单元Cooper-harper得分</th><th>子任务模块Cooper-harper得分</th></tr>' +
     '</thead>' +
     '<tbody>' +
     tmp +
@@ -223,6 +277,51 @@ myUtil.formatModuleDataGray = function(obj) {
 
   return compiled(obj);
 
+}
+
+myUtil.formatModuleDataCooper = function(obj) {
+  var str = '';
+  var tmp = '';
+
+  tmp += '<% _.each(obj.children, function(val, index) { %> ' +
+    '<% _.each(val.children, function(v, k) { %>' +
+    '<% if (index===0) {%>' +
+    '<% if (k === 0) { %>' +
+    '<tr><td rowspan=<%= obj.count %>><%= obj.text %></td>' +
+    '<td rowspan=<%= val.children.length > 0 ?val.children.length : 1%>><%=val.data.text%></td>' +
+    '<td><%= v.data.text %></td>' +
+    '<td><%= v.data.sch %></td>' +
+    '<td rowspan=<%= val.children.length > 0 ?val.children.length : 1%>><%=val.data.sch%></td>' +
+    '<td rowspan=<%= obj.count %>><%= obj.sch %></td></tr>' +
+    '<% } else { %>' +
+    '<tr><td><%= v.data.text %></td>' +
+    '<td><%= v.data.sch %></td></tr>' +
+    '<% } %>' +
+    '<% } else { %>' +
+    '<% if (k === 0) { %>' +
+    '<tr><td rowspan=<%= val.children.length > 0 ?val.children.length : 1%>><%=val.data.text%></td>' +
+    '<td><%= v.data.text %></td>' +
+    '<td><%= v.data.sch %></td>' +
+    '<td rowspan=<%= val.children.length > 0 ?val.children.length : 1%>><%=val.data.sch%></td></tr>' +
+    '<% } else { %>' +
+    '<tr><td><%= v.data.text %></td>' +
+    '<td><%= v.data.sch %></td></tr>' +
+    '<% }%>' +
+    '<% }%>' +
+    '<% }) %>' +
+    '<% }) %>';
+  str = '<table class="table table-bordered table-striped" >' +
+    '<thead>' +
+    '<tr><th>任务模块</th><th>子任务模块</th><th>任务单元</th><th>任务单元Cooper-harper得分</th><th>子任务模块Cooper-harper得分</th><th>任务模块Cooper-harper得分</th></tr>' +
+    '</thead>' +
+    '<tbody>' +
+    tmp +
+    '</tbody>' +
+    '</table>';
+
+  var compiled = _.template(str);
+
+  return compiled(obj);
 }
 
 myUtil.saveToExcel = function(ele) {

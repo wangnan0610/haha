@@ -47,6 +47,8 @@ module.exports = function(app) {
   
   //cooper
   app.get('/cooper', cooper.index);
+  app.get('/cooper/:filename', cooper.openFiles);
+  app.post('/cooper/:filename', cooper.saveFile);
 
   //user
   app.get('/user', auth.rootRequired, user.index);

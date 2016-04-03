@@ -1,0 +1,40 @@
+<div class="col-md-8">
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <% if (m.file) { %>
+      展示界面 : <h id="task-name"> <%= m.file %> </h>
+      <% } else { %>
+      展示界面
+      <% } %>
+    </div>
+    <div class="panel-body">
+      <%if (m.files && m.files.length > 0) { %>
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>文件名</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (var i = 0; i < m.files.length; i++) { %>
+              <tr>
+                <td><%= m.files[i] %></td>
+                <td><a href="/<%=m.slug%>/<%=m.files[i]%>"class="btn btn-success btn-sm">打开</a></td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>          
+        <% } else { %>
+          <div id="right-result"></div>
+        <% } %>
+    </div>
+  </div>
+</div>
+<script>
+  if (<%- m.jsTree %>) {
+    var jsTreeData = <%- m.jsTree %>;
+  }
+</script>
+
+<% block( 'js').append('<script src="/components/jstree/dist/jstree.js"></script>') %>

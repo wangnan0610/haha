@@ -1,0 +1,14 @@
+<% block( 'css').append('<link rel="stylesheet" href="/components/jstree/dist/themes/default/style.min.css">') %>
+
+  <div class="col-md-4">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <%= m.name %>
+        <a type="button" href="/<%= m.slug %>/files" class="btn btn-primary" id="open-files">文件列表</a>
+      </div>
+      <div class="panel-body">
+        <div id="left-tree">
+        </div>
+      </div>
+    </div>
+  </div>
