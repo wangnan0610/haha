@@ -27,7 +27,7 @@ var UserSchema = new Schema({
   salt: {
     type: String
   },
-  //状态: wait, pass, fail, delete
+  //状态: wait, pass
   status: {
     type: String,
     default: 'wait'

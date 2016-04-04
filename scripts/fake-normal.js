@@ -15,16 +15,10 @@ async.whilst(
   function(cb) {
     count++;
     var obj = {};
-    obj.companyname = faker.company.companyName();
-    obj.email = faker.internet.email();
     obj.username = faker.name.findName();
-    obj.website = faker.internet.url();
-    obj.impressions = faker.random.number();
-    obj.phone = faker.phone.phoneNumber();
-    obj.contact = 'qq: ' + faker.random.number();
-    obj.role = 'publisher';
+    obj.role = 'normal';
     obj.password = faker.internet.password();
-    obj.status = _.sample(['pass', 'wait', 'fail']);
+    obj.status = _.sample(['pass', 'wait', 'delete']);
 
     User.newAndSave(obj, function(err) {
       if (err) console.log(err);
