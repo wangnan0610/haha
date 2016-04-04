@@ -6,3 +6,25 @@
   text-align: center !important;
   vertical-align: bottom !important;
 }
+
+html, body {
+  height: 100%;
+}
+
+.dash-container {
+  text-align: center;
+}
+
+.dash-title {
+  margin-top: 200px;
+}
+
+.dash-content {
+  line-height: 150px;
+  font-size: 16px;
+}
+
+.dash-foot {
+  margin-top: 200px;
+}
+

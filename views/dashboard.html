@@ -1,19 +1,36 @@
-<h>欢迎使用多人协作任务仿真及评价系统</h>
-<% if (user.role === 'normal') { %>
-  <a href="javascript:void(0)">任务单元分配</a>
-<% } else { %> 
-  <a href="/task">任务单元分配</a>
-<% } %>
-<a href="/therp">人误率分析</a>
-<a href="/gray">人机分配灰色熵值评价法</a>
-<a href="/cooper">Cooper-harper评价法</a>
+<% layout('layout-simple') -%>
+  <div class="dash-container">
+    <div class="dash-title">
+      <h1>欢迎使用多人协作任务仿真及评价系统</h1>
+    </div>
+    <div class="dash-content">
+      <% if (user.role === 'normal') { %>
+        <a href="javascript:void(0)">
+          任务单元分配
+        </a>
+      <% } else { %> 
+        <a href="/task">
+          任务单元分配
+        </a>
+      <% } %>
+      <a href="/therp">人误率分析</a>
+      <a href="/gray">人机分配灰色熵值评价法</a>
+      <a href="/cooper">Cooper-harper评价法</a>
+    </div>
+    <div class="dash-more">
+      <a href="/introduction">使用说明</a>
+      <span> | </span>
+      <a href="/about">了解更多</a>
+      <span> | </span>
+      <a href="/contact">联系我们</a>
+      <span> | </span>
+      <% if (user.role === 'root') { %>
+        <a href="/user">用户管理</a>
+      <% } %>
+    </div>
 
-<a href="/introduction">使用说明</a>
-<a href="/about">了解更多</a>
-<a href="/contact">联系我们</a>
 
-<% if (user.role === 'root') { %>
-  <a href="/user">用户管理</a>
-<% } %>
-
-<p>北京航空航天大学生物与医学工程学院工效学实验室</p>
+    <div class="dash-foot">
+      <p>北京航空航天大学生物与医学工程学院工效学实验室</p>
+    </div>
+  </div>
