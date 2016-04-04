@@ -38,7 +38,7 @@ module.exports = function(app) {
   //therp
   app.get('/therp', therp.index);
   app.get('/therp/:filename', therp.openFile);
-  app.get('/therp/save/:filename', therp.saveFile);
+  app.post('/therp/:filename', therp.saveFile);
 
   //gray
   app.get('/gray', gray.index);

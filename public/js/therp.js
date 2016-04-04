@@ -1,27 +1,27 @@
 $(function() {
   //分为三种不同的展示界面
-  $('#therp-tree')
+  var $showPanel = $('#right-result');
+  $('#left-tree')
     .on('select_node.jstree', function(e, data) {
       var selectNode = data.node.data; //用来保存所选元素的数据
-      $('#therp-result').empty();
+      $showPanel.empty();
 
       if (selectNode.role === 1) { //任务模块
-        $('#therp-result').append(window.myUtil.formatModuleData(selectNode));
-        $('#therp-result').append(window.myUtil.addSaveButton({
-          id: 'therp-save-button',
-          url: '/therp/save/' + $('#therp-filename').text().trim() + '.xlsx',
+        $showPanel.append(window.myUtil.formatModuleData(selectNode));
+        $showPanel.append(window.myUtil.addSaveButton({
+          url: '/therp/' + $('#task-name').text().trim(),
         }));
       } else if (selectNode.role === 2) { //子任务模块
-        $('#therp-result').append(window.myUtil.formatSubData(selectNode));
+        $showPanel.append(window.myUtil.formatSubData(selectNode));
       } else if (selectNode.role === 3) { //任务单元 
-        $('#therp-result').append(window.myUtil.formatTaskData(selectNode));
+        $showPanel.append(window.myUtil.formatTaskData(selectNode));
       } else {
         console.error('有问题，role不对');
       }
     })
     .jstree({
       'core': {
-        data: window.therpJsTree
+        data: _.clone(window.jsTreeData)
       }
     });
 });

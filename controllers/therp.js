@@ -6,14 +6,29 @@ var util = require('../libs/util');
 
 var DIR = path.join(__dirname, '../public/file3/');
 
+
+var m = {
+  name: '人误率分析',
+  slug: 'therp',
+  files: [],
+  file: '',
+  jsTree: '',
+}
+
 //人误率分析，默认读取file3下的文件名列表
 exports.index = function(req, res) {
-  var files = util.readFolder3('therp');
+  //var files = util.readFolder3('therp');
+
+  //res.render('therp', {
+  //files: files,
+  //jsTree: '',
+  //file: '',
+  //})
+  var files = util.getFilenames('therp');
+  m.files = files;
 
   res.render('therp', {
-    files: files,
-    jsTree: '',
-    file: '',
+    m: m
   })
 }
 
@@ -21,49 +36,46 @@ exports.index = function(req, res) {
 exports.openFile = function(req, res) {
   var filename = req.params.filename || '';
 
-  var files = fs.readdirSync(DIR);
+  var files = util.getFilenames('therp');
 
   if (files.indexOf(filename) === -1) { //文件不存在
     res.redirect('/therp');
   } else {
-    var content = util.readExcel(path.join(DIR, filename));
-    var obj = util.formatJsTree(content, 'therp');
+    //var content = util.readExcel(path.join(DIR, filename));
+    var obj = util.formatJsTree(filename, 'therp');
     obj = util.getTherp(obj);
 
+    m.jsTree = JSON.stringify(obj);
+    m.files = [];
+    m.file = filename;
+
     res.render('therp', {
-      jsTree: JSON.stringify(obj),
-      files: [],
-      file: filename.slice(0, -5),
+      m: m
     })
   }
 }
 
 //将计算过的数据保存到excel里面
 exports.saveFile = function(req, res) {
+  //filename params 任务模块
   var filename = req.params.filename || '';
 
-  var files = fs.readdirSync(DIR);
+  var error;
 
-  if (files.indexOf(filename) === -1) { //文件不存在
-    res.json({
-      code: 500,
-      error: '文件不存在'
-    })
-  } else {
-    var error;
-    try {
-      var content = util.readExcel(path.join(DIR, filename));
-      var obj = util.formatJsTree(content, 'therp');
-      obj = util.getTherp(obj);
-      util.therpToExcel(filename, obj);
-    } catch (e) {
-      error = e;
-    }
+  try {
+    var obj = req.body;
 
-    res.json({
-      code: error ? 500 : 200,
-      error: error || ''
-    })
+    var file = util.addFileResult(req.params.filename, 'therp');
 
+    util.therpToExcel(file, obj);
+  } catch (e) {
+    console.error(e.stack);
+    error = e;
   }
+
+  res.json({
+    code: error ? 500 : 200,
+    error: error
+  })
+
 }

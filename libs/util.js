@@ -43,13 +43,16 @@ exports.getFilesSp = function(filename, type) {
 
   if (type === 'gray') {
     filename = filename + '_2';
-  } else {
+  } else if (type === 'cooper'){
     filename = filename + '_3';
+  } else {
+    filename = filename + '_1';
   }
 
   files = _.filter(files, function(file) {
     return file.indexOf('~$') === -1 && file.indexOf(filename) >= 0;
   })
+
   return files;
 }
 
@@ -92,7 +95,8 @@ exports.getFilenames = function(type) {
   });
   if (type == 'therp') {
     files = _.map(files, function(f) {
-      return self.delFileEx(f);
+      var arr = f.split('_').slice(0, 2);
+      return arr.join('_');
     });
     return files;
 
@@ -137,7 +141,11 @@ exports.readExcel = function(file) {
  * cooper
  */
 //根据读取的excel内容转化成jstree
-exports.formatJsTree = function(csv, type) {
+exports.formatJsTree = function(file, type) {
+  file = this.getFilesSp(file, 'therp')[0];
+
+  var csv = this.readExcel(path.join(DIR, file));
+
   var tempArr = [];
   var tempObj = {};
   var obj = {};
@@ -442,8 +450,7 @@ exports.therpToExcel = function(file, obj) {
   ws.Cell(2, 1, end - 1, 1, true).String(obj.text);
   ws.Cell(2, 6, end - 1, 6, true).Number(obj.data.therp);
 
-  wb.write(path.join(__dirname, '../public/file4/') + file + '_1_result.xlsx');
-
+  wb.write(path.join(__dirname, '../public/file4/') + file);
 }
 
 //将jstree可识别的gray对象转化成excel
