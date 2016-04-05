@@ -43,7 +43,7 @@ exports.getFilesSp = function(filename, type) {
 
   if (type === 'gray') {
     filename = filename + '_2';
-  } else if (type === 'cooper'){
+  } else if (type === 'cooper') {
     filename = filename + '_3';
   } else {
     filename = filename + '_1';
@@ -142,9 +142,13 @@ exports.readExcel = function(file) {
  */
 //根据读取的excel内容转化成jstree
 exports.formatJsTree = function(file, type) {
-  file = this.getFilesSp(file, 'therp')[0];
+  if (type == 'therp') {
+    file = this.getFilesSp(file, 'therp')[0];
 
-  var csv = this.readExcel(path.join(DIR, file));
+    var csv = this.readExcel(path.join(DIR, file));
+  } else {
+    csv = file;
+  }
 
   var tempArr = [];
   var tempObj = {};
@@ -301,12 +305,14 @@ exports.formatJsTreeSp = function(filename, type, fn) {
 
   if (type === 'gray') {
     var files = self.getFilesSp(filename, type);
+    console.log(files);
 
     async.map(files, function(file, cb) {
       var error;
       var obj;
       try {
         var content = self.readExcel(path.join(DIR, file));
+        console.log(content);
         var data = self.formatJsTree(content, 'gray');
         obj = {
           data: data,
@@ -315,6 +321,7 @@ exports.formatJsTreeSp = function(filename, type, fn) {
       } catch (e) {
         error = e;
       }
+      console.log(obj);
       cb(error, obj);
     }, function(err, results) {
       //处理数据
