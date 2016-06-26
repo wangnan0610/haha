@@ -7,7 +7,7 @@ var m = {
   slug: 'cooper',
   files: [],
   file: '',
-  jsTree: '',
+  jsTree: null,
 }
 
 exports.index = function(req, res) {

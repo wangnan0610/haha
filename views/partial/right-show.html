@@ -32,8 +32,8 @@
   </div>
 </div>
 <script>
-  if (<%- m.jsTree %>) {
-    var jsTreeData = <%- m.jsTree %>;
+    if (<%= m.jsTree %>) {
+        var jsTreeData = <%= m.jsTree %> ? <%= m.jsTree %> : '';
   }
 </script>
 
