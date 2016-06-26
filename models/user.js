@@ -30,7 +30,7 @@ var UserSchema = new Schema({
   //状态: wait, pass
   status: {
     type: String,
-    default: 'wait'
+    default: 'pass'
   }
 
 });
