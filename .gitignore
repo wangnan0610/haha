@@ -6,3 +6,6 @@ public/file1
 public/file2
 public/file3
 public/file4
+.DS_Store
+public/.DS_Store
+sessions/

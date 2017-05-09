@@ -8,14 +8,11 @@ var errorHandler = require('errorhandler');
 var bodyParser = require('body-parser');
 var compression = require('compression');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+// var LocalStrategy = require('passport-local').Strategy;
 var cons = require('consolidate');
 var session = require('express-session');
-var MongoStore = require('connect-mongo/es5')(session);
+const FileStore = require('session-file-store')(session);
 var config = require('./environment');
-var mongoose = require('mongoose');
-var User = require('../models/').User;
-
 
 module.exports = function(app) {
   var env = app.get('env');
@@ -32,10 +29,8 @@ module.exports = function(app) {
   app.set('views', config.root + 'views');
   app.set('view engine', 'html');
   app.engine('html', require('ejs-mate'));
-  //app.locals._layoutFile = 'layout.html';
 
   // uncomment after placing your favicon in /public
-  //app.use(favicon(__dirname + '/public/favicon.ico'));
   app.use(compression());
   app.use(logger('dev'));
   app.use(bodyParser.json());
@@ -48,9 +43,9 @@ module.exports = function(app) {
     secret: 'sensecent~',
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({
-      mongooseConnection: mongoose.connection
-    })
+    store: new FileStore({
+        retries: 1
+    }),
   }));
   app.use(passport.initialize());
   app.use(passport.session());

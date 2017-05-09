@@ -1,5 +1,5 @@
 module.exports = {
   mongo: {
-    url: 'mongodb://localhost/wangnan'
+    url: 'mongodb://127.0.0.1:27017/wangnan'
   }
 }

@@ -99,23 +99,19 @@ exports.login = function(req, res, next) {
     });
   });
 
-  getUser(loginname, function(err, user) {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return ep.emit('login_error');
-    }
-    if (user.status !== 'pass') {
-      return res.render('notify/notify', {
-        error: '还未通过申请'
-      });
-    }
-
-    req.session.user = user;
-
-    res.redirect('/dashboard');
-  })
+  const user = getUser(loginname);
+  console.log(user);
+  
+  if (!user) {
+    return ep.emit('login_error');
+  }
+  if (user.status !== 'pass') {
+    return res.render('notify/notify', {
+      error: '还未通过申请'
+    });
+  }
+  req.session.user = user;
+  res.redirect('/dashboard');
 };
 
 //登出

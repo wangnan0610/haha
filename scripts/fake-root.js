@@ -1,16 +1,16 @@
-var User = require('../proxy/user');
-var mongoose = require('mongoose');
-var _ = require('lodash');
+const low = require('lowdb');
+const fileAsync = require('lowdb/lib/storages/file-async');
+const config = require('../config/environment');
 
-mongoose.connect('mongodb://localhost/wangnan');
-
-var obj = {};
-obj.username = 'root';
-obj.role = 'root';
-obj.password='123456';
-obj.status = 'pass';
-
-User.newAndSave(obj, function(err) {
-  if (err) console.log(err);
-  console.log('DONE');
+const db = low(config.root + 'users.json', {
+  storage: fileAsync
 });
+
+db.defaults({ users: [] }).write();
+
+db.get('users').push({
+    username: 'root',
+    role: 'root',
+    password: '123456',
+    status: 'pass',
+}).write();

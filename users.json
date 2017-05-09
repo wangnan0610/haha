@@ -1,0 +1,10 @@
+{
+  "users": [
+    {
+      "username": "root",
+      "role": "root",
+      "password": "123456",
+      "status": "pass"
+    }
+  ]
+}
